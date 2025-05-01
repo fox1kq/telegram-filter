@@ -9,7 +9,7 @@ BANNED_WORDS = ban_words
 
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-ADMIN_ID = int(os.getenv("ADMIN_ID"))
+ADMIN_ID = os.getenv("ADMIN_ID")
 
 # 🔎 Проверка на запрещённые слова
 def contains_banned_word(text: str) -> bool:
