@@ -2,27 +2,10 @@ from telegram import Update, ChatPermissions
 from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filters
 import os
 from dotenv import load_dotenv
+from ban_words import ban_words
 
 # 🚫 Запрещённые слова
-BANNED_WORDS = [
-    "привет",
-    "курьер",
-    "закладочка",
-    "закладочку",
-    "шабашка",
-    "работа",
-    "платим",
-    "оплатить",
-    "работенка",
-    "разноска",
-    "билет",
-    "плачу",
-    "подработка",
-    "подработку",
-    "карты",
-    "КАРТЫ",
-    "долларов"
-]
+BANNED_WORDS = ban_words
 
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
