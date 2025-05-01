@@ -1,5 +1,7 @@
 from telegram import Update, ChatPermissions
 from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filters
+import os
+from dotenv import load_dotenv
 
 # 🚫 Запрещённые слова
 BANNED_WORDS = [
@@ -22,10 +24,9 @@ BANNED_WORDS = [
     "долларов"
 ]
 
-# 🔐 Токен бота и Telegram ID администратора
-BOT_TOKEN = '7405875615:AAEGKqBx7KW8UkRfCJyLBRHqheiqDboK8LA'
-ADMIN_ID = 702647989  # ← замени на свой Telegram user_id
-
+load_dotenv()
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
 # 🔎 Проверка на запрещённые слова
 def contains_banned_word(text: str) -> bool:
