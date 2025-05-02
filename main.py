@@ -53,6 +53,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
             )
 
+            # Выделение запрещённых слов в сообщении
+            highlighted_text = text
+            for word in BANNED_WORDS:
+                if word in highlighted_text:
+                    highlighted_text = highlighted_text.replace(word, f"*{word}*")
+
             # Лог админу (в ЛС)
             log_msg = (
                 f"🚨 *Удалено сообщение с запрещёнными словами!*\n"
