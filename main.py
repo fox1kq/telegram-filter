@@ -26,6 +26,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.message.from_user
     chat = update.message.chat
 
+    # ⛔ Проверка: если пользователь админ — пропускаем
+    try:
+        member = await context.bot.get_chat_member(chat.id, user.id)
+        if member.status in ['administrator', 'creator']:
+            return
+    except Exception as e:
+        print(f"Ошибка при проверке админа: {e}")
+        return
+
     if contains_banned_word(text):
         try:
             # Удаляем сообщение
