@@ -1,8 +1,9 @@
 from telegram import Update, ChatPermissions
 from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filters
 import os
+import re
 from dotenv import load_dotenv
-from ban_words import ban_words
+from ban_words import ban_words  # <- твой список слов
 
 # 🚫 Запрещённые слова
 BANNED_WORDS = ban_words
@@ -14,8 +15,7 @@ ADMIN_ID = os.getenv("ADMIN_ID")
 # 🔎 Проверка на запрещённые слова
 def contains_banned_word(text: str) -> bool:
     text = text.lower()
-    return any(word in text for word in BANNED_WORDS)
-
+    return any(re.search(rf"\b{re.escape(word)}\b", text) for word in BANNED_WORDS)
 
 # 📩 Обработка входящих сообщений
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -31,7 +31,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             # Удаляем сообщение
             await update.message.delete()
 
-            # Перманентный мут (все разрешения отключены)
+            # Перманентный мут
             await context.bot.restrict_chat_member(
                 chat_id=chat.id,
                 user_id=user.id,
@@ -53,13 +53,17 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
             )
 
-            # Выделение запрещённых слов в сообщении
+            # 🔍 Выделение запрещённых слов
             highlighted_text = text
-            for word in BANNED_WORDS:
-                if word in highlighted_text:
-                    highlighted_text = highlighted_text.replace(word, f"*{word}*")
 
-            # Лог админу (в ЛС)
+            def highlight_banned(match):
+                return f"`{match.group(0)}`"
+
+            for word in BANNED_WORDS:
+                pattern = re.compile(rf"\b{re.escape(word)}\b", re.IGNORECASE)
+                highlighted_text = pattern.sub(highlight_banned, highlighted_text)
+
+            # 📬 Лог админу
             log_msg = (
                 f"🚨 *Удалено сообщение с запрещёнными словами!*\n"
                 f"👤 Пользователь: @{user.username or '—'}\n"
@@ -70,7 +74,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         except Exception as e:
             print(f"Ошибка: {e}")
-
 
 # 🚀 Запуск
 if __name__ == '__main__':
