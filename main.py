@@ -63,7 +63,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             log_msg = (
                 f"🚨 *Удалено сообщение с запрещёнными словами!*\n"
                 f"👤 Пользователь: @{user.username or '—'}\n"
-                f"💬 Сообщение: {text}\n"
+                f"💬 Сообщение: {highlighted_text}\n"
                 f"👥 Группа: {chat.title or chat.id}"
             )
             await context.bot.send_message(chat_id=ADMIN_ID, text=log_msg, parse_mode='Markdown')
