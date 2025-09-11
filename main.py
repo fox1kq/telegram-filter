@@ -22,7 +22,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message:
         return
 
-    text = update.message.text or ""
+    # Берём либо текст, либо подпись к медиа
+    text = update.message.text or update.message.caption or ""
+    if not text:
+        return
+
     user = update.message.from_user
     chat = update.message.chat
 
@@ -56,7 +60,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     can_send_other_messages=False,
                     can_add_web_page_previews=False,
                     can_change_info=False,
-                    can_invite_users=False,
+                    can_invite_users=True,
                     can_pin_messages=False,
                     can_manage_topics=False
                 )
@@ -87,6 +91,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # 🚀 Запуск
 if __name__ == '__main__':
     app = ApplicationBuilder().token(BOT_TOKEN).build()
-    app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
+    # Проверяем и обычный текст, и подписи к медиа
+    app.add_handler(MessageHandler((filters.TEXT | filters.Caption) & (~filters.COMMAND), handle_message))
     print("Бот запущен!")
     app.run_polling()
