@@ -15,7 +15,7 @@ ADMIN_ID = os.getenv("ADMIN_ID")
 # 🔎 Проверка на запрещённые слова
 def contains_banned_word(text: str) -> bool:
     text = text.lower()
-    return any(re.search(rf"\b{re.escape(word)}\b", text) for word in BANNED_WORDS)
+    return any(re.search(re.escape(word), text) for word in BANNED_WORDS)
 
 # 📩 Обработка входящих сообщений
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
